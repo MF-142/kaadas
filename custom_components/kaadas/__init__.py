@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from .const import CONF_POLL_INTERVAL_EVENT, CONF_POLL_INTERVAL_INFO, CONF_TOKEN, CONF_UID, CONF_WIFI_SN, DOMAIN
 from .coordinator import DeviceInfoCoordinator, DoorbellCoordinator, LockEventCoordinator
 
-PLATFORMS = ["sensor", "binary_sensor", "camera"]
+PLATFORMS = ["sensor", "binary_sensor", "image"]
 
 
 class KaadasApi:
