@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     data = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([KaadasDoorbellImage(data["doorbell"], entry)])
+    async_add_entities([KaadasDoorbellImage(hass, data["doorbell"], entry)])
 
 
 class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
@@ -29,10 +29,9 @@ class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
 
     _attr_content_type = "image/jpeg"
 
-    def __init__(self, coordinator, entry: ConfigEntry) -> None:
-        # 必须显式调用两个父类的 __init__，因为 CoordinatorEntity 不会自动向上传递
+    def __init__(self, hass: HomeAssistant, coordinator, entry: ConfigEntry) -> None:
         CoordinatorEntity.__init__(self, coordinator)
-        ImageEntity.__init__(self)
+        ImageEntity.__init__(self, hass)
         self._entry = entry
         self._attr_name = "访客抓拍"
         self._attr_unique_id = f"{entry.entry_id}_doorbell_image"
