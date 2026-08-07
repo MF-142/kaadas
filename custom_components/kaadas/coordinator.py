@@ -1,5 +1,4 @@
 import logging
-
 from __future__ import annotations
 
 from datetime import timedelta
@@ -15,7 +14,7 @@ class LockEventCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, entry, api, interval: int) -> None:
         super().__init__(
             hass,
-            logger=logging.getLogger(__name__),
+            logger=logging.getLogger(__name__),  # ✅ 已修复
             name="kaadas_lock_event",
             update_interval=timedelta(seconds=interval),
         )
@@ -39,7 +38,7 @@ class DoorbellCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, entry, api, interval: int) -> None:
         super().__init__(
             hass,
-            logger=hass.logger,
+            logger=logging.getLogger(__name__),  # ← 这里改了
             name="kaadas_doorbell",
             update_interval=timedelta(seconds=interval),
         )
@@ -63,7 +62,7 @@ class DeviceInfoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, entry, api, interval: int) -> None:
         super().__init__(
             hass,
-            logger=hass.logger,
+            logger=logging.getLogger(__name__),  # ← 这里改了
             name="kaadas_device_info",
             update_interval=timedelta(seconds=interval),
         )
