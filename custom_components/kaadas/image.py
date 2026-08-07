@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import aiohttp
@@ -9,6 +10,7 @@ from homeassistant.components.image import ImageEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from PIL import Image
 
 from .const import DOMAIN
@@ -21,10 +23,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([KaadasDoorbellImage(data["doorbell"], entry)])
 
 
-class KaadasDoorbellImage(ImageEntity):
+class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
+    """门铃抓拍图像实体。"""
+
+    _attr_content_type = "image/jpeg"
+
     def __init__(self, coordinator, entry: ConfigEntry) -> None:
-        super().__init__()
-        self.coordinator = coordinator
+        CoordinatorEntity.__init__(self, coordinator)
         self._entry = entry
         self._attr_name = "访客抓拍"
         self._attr_unique_id = f"{entry.entry_id}_doorbell_image"
@@ -43,15 +48,33 @@ class KaadasDoorbellImage(ImageEntity):
             "manufacturer": "Kaadas",
         }
 
+    @property
+    def extra_state_attributes(self):
+        """实体详情页显示的文字信息。"""
+        data = self.coordinator.data
+        return {
+            "event_id": data.get("event_id"),
+            "thumb_url": data.get("thumb_url"),
+            "text_content": data.get("text_content"),
+            "time": data.get("time"),
+            "local_image": "/local/kaadas/doorbell_latest.jpg",
+        }
+
+    @property
+    def image_last_updated(self) -> datetime | None:
+        """HA 用此判断图片是否更新，前端会自动刷新。"""
+        if self._last_event_id:
+            return self.coordinator.data.get("time") or datetime.utcnow()
+        return None
+
     async def async_image(self) -> bytes | None:
-        """下载、旋转并返回图片 bytes。HA 每次查看图片时调用。"""
+        """下载、旋转并返回图片 bytes。"""
         event_id = self.coordinator.data.get("event_id")
         thumb_url = self.coordinator.data.get("thumb_url")
 
         if not thumb_url:
             return self._cached_image
 
-        # 同一个事件直接返回缓存，避免重复下载/旋转
         if event_id and event_id == self._last_event_id and self._cached_image:
             return self._cached_image
 
@@ -63,7 +86,6 @@ class KaadasDoorbellImage(ImageEntity):
                         return self._cached_image
                     image_bytes = await response.read()
 
-            # 逆时针旋转 90 度
             image = Image.open(io.BytesIO(image_bytes))
             rotated = image.rotate(90, expand=True)
             output = io.BytesIO()
@@ -71,7 +93,6 @@ class KaadasDoorbellImage(ImageEntity):
             self._cached_image = output.getvalue()
             self._last_event_id = event_id
 
-            # 同时保存到本地，供 sensor 的 local_image 引用
             local_path = Path("/config/www/kaadas/doorbell_latest.jpg")
             local_path.parent.mkdir(parents=True, exist_ok=True)
             local_path.write_bytes(self._cached_image)
