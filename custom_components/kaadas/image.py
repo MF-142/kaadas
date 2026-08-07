@@ -11,6 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util
 from PIL import Image
 
 from .const import DOMAIN
@@ -29,12 +30,15 @@ class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
     _attr_content_type = "image/jpeg"
 
     def __init__(self, coordinator, entry: ConfigEntry) -> None:
+        # 必须显式调用两个父类的 __init__，因为 CoordinatorEntity 不会自动向上传递
         CoordinatorEntity.__init__(self, coordinator)
+        ImageEntity.__init__(self)
         self._entry = entry
         self._attr_name = "访客抓拍"
         self._attr_unique_id = f"{entry.entry_id}_doorbell_image"
         self._cached_image: bytes | None = None
         self._last_event_id: str | None = None
+        self._image_last_updated: datetime | None = None
 
     @property
     def available(self) -> bool:
@@ -62,10 +66,8 @@ class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
 
     @property
     def image_last_updated(self) -> datetime | None:
-        """HA 用此判断图片是否更新，前端会自动刷新。"""
-        if self._last_event_id:
-            return self.coordinator.data.get("time") or datetime.utcnow()
-        return None
+        """HA 用此判断图片是否更新，前端会自动刷新。必须是 datetime 对象。"""
+        return self._image_last_updated
 
     async def async_image(self) -> bytes | None:
         """下载、旋转并返回图片 bytes。"""
@@ -92,6 +94,7 @@ class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
             rotated.save(output, format=image.format or "JPEG")
             self._cached_image = output.getvalue()
             self._last_event_id = event_id
+            self._image_last_updated = dt_util.utcnow()
 
             local_path = Path("/config/www/kaadas/doorbell_latest.jpg")
             local_path.parent.mkdir(parents=True, exist_ok=True)
