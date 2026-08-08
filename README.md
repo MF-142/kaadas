@@ -1,4 +1,4 @@
-![凯迪仕](image.png)
+![凯迪仕]([image.png](https://github.com/MF-142/kaadas/blob/main/icon.png))
 # Kaadas Home Assistant 集成
 
 这个目录包含一个基于你提供的 Node-RED Flow 的 Home Assistant 自定义集成骨架，包含：
