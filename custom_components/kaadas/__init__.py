@@ -5,19 +5,31 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .const import CONF_POLL_INTERVAL_EVENT, CONF_POLL_INTERVAL_INFO, CONF_TOKEN, CONF_UID, CONF_WIFI_SN, DOMAIN
+from .const import (
+    CONF_PHONE_NAME,
+    CONF_POLL_INTERVAL_EVENT,
+    CONF_POLL_INTERVAL_INFO,
+    CONF_TOKEN,
+    CONF_UID,
+    CONF_USER_AGENT,
+    CONF_WIFI_SN,
+    DOMAIN,
+)
 from .coordinator import DeviceInfoCoordinator, DoorbellCoordinator, LockEventCoordinator
 
 PLATFORMS = ["sensor", "binary_sensor", "image"]
 
 
 class KaadasApi:
-    def __init__(self, hass: HomeAssistant, token: str, wifi_sn: str, uid: str) -> None:
+    def __init__(self, hass: HomeAssistant, token: str, wifi_sn: str, uid: str, user_agent: str, phone_name: str) -> None:
         self._hass = hass
         self.token = token
         self.wifi_sn = wifi_sn
         self.uid = uid
+        self.user_agent = user_agent
+        self.phone_name = phone_name
 
     def _build_headers(self, ver: str) -> dict[str, str]:
         headers = {
@@ -25,9 +37,9 @@ class KaadasApi:
             "token": self.token,
             "ver": ver,
             "reqSource": "app",
-            "phoneName": "iPhone 7 Plus",
+            "phoneName": self.phone_name,
             "lang": "zh_CN",
-            "User-Agent": "KaadasLock/6.14.3 (iPhone; iOS 15.8.8; Scale/3.00)",
+            "User-Agent": self.user_agent,
             "Connection": "keep-alive",
             "Content-Type": "application/json",
         }
@@ -47,11 +59,17 @@ class KaadasApi:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     data = {**entry.data, **entry.options}
+
+    if CONF_USER_AGENT not in data or CONF_PHONE_NAME not in data:
+        raise ConfigEntryAuthFailed("缺少 User-Agent 和 phoneName，请删除集成后重新配置")
+
     api = KaadasApi(
         hass,
         token=data[CONF_TOKEN],
         wifi_sn=data[CONF_WIFI_SN],
         uid=data[CONF_UID],
+        user_agent=data[CONF_USER_AGENT],
+        phone_name=data[CONF_PHONE_NAME],
     )
 
     lock_event_coordinator = LockEventCoordinator(hass, entry, api, int(data.get(CONF_POLL_INTERVAL_EVENT, 10)))

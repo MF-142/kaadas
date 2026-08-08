@@ -5,13 +5,13 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 
 from .const import (
+    CONF_PHONE_NAME,
     CONF_POLL_INTERVAL_EVENT,
     CONF_POLL_INTERVAL_INFO,
     CONF_TOKEN,
     CONF_UID,
+    CONF_USER_AGENT,
     CONF_WIFI_SN,
-    DEFAULT_EVENT_POLL,
-    DEFAULT_INFO_POLL,
     DOMAIN,
 )
 
@@ -32,8 +32,13 @@ class KaadasConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_TOKEN): str,
                 vol.Required(CONF_WIFI_SN): str,
                 vol.Required(CONF_UID): str,
-                vol.Optional(CONF_POLL_INTERVAL_EVENT, default=DEFAULT_EVENT_POLL): int,
-                vol.Optional(CONF_POLL_INTERVAL_INFO, default=DEFAULT_INFO_POLL): int,
+                vol.Required(
+                    CONF_USER_AGENT,
+                    description={"suggested_value": "KaadasLock/6.14.3 (iPhone; iOS 15.8.8; Scale/3.00)"},
+                ): str,
+                vol.Required(CONF_PHONE_NAME, description={"suggested_value": "iPhone 7 Plus"}): str,
+                vol.Optional(CONF_POLL_INTERVAL_EVENT, default=10): int,
+                vol.Optional(CONF_POLL_INTERVAL_INFO, default=3600): int,
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
@@ -54,8 +59,30 @@ class KaadasOptionsFlowHandler(config_entries.OptionsFlow):
 
         schema = vol.Schema(
             {
-                vol.Optional(CONF_POLL_INTERVAL_EVENT, default=self.config_entry.options.get(CONF_POLL_INTERVAL_EVENT, DEFAULT_EVENT_POLL)): int,
-                vol.Optional(CONF_POLL_INTERVAL_INFO, default=self.config_entry.options.get(CONF_POLL_INTERVAL_INFO, DEFAULT_INFO_POLL)): int,
+                vol.Required(
+                    CONF_USER_AGENT,
+                    description={
+                        "suggested_value": self.config_entry.options.get(
+                            CONF_USER_AGENT, self.config_entry.data.get(CONF_USER_AGENT, "")
+                        )
+                    },
+                ): str,
+                vol.Required(
+                    CONF_PHONE_NAME,
+                    description={
+                        "suggested_value": self.config_entry.options.get(
+                            CONF_PHONE_NAME, self.config_entry.data.get(CONF_PHONE_NAME, "")
+                        )
+                    },
+                ): str,
+                vol.Optional(
+                    CONF_POLL_INTERVAL_EVENT,
+                    default=self.config_entry.options.get(CONF_POLL_INTERVAL_EVENT, 10),
+                ): int,
+                vol.Optional(
+                    CONF_POLL_INTERVAL_INFO,
+                    default=self.config_entry.options.get(CONF_POLL_INTERVAL_INFO, 3600),
+                ): int,
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

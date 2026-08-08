@@ -3,13 +3,27 @@
     "step": {
       "user": {
         "title": "配置凯迪仕门锁",
-        "description": "填写抓包得到的 Token、wifiSN 和 uid。",
+        "description": "填写抓包得到的 Token、wifiSN、uid、User-Agent 和 phoneName。",
         "data": {
           "token": "Token",
           "wifi_sn": "wifiSN",
           "uid": "uid",
+          "user_agent": "User-Agent",
+          "phone_name": "phoneName",
           "poll_interval_event": "事件轮询间隔(秒)",
           "poll_interval_info": "设备信息轮询间隔(秒)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "user_agent": "User-Agent",
+          "phone_name": "phoneName",
+          "poll_interval_event": "事件轮询间隔(秒)（默认10秒）",
+          "poll_interval_info": "设备信息轮询间隔(秒)（默认3600秒）"
         }
       }
     }
