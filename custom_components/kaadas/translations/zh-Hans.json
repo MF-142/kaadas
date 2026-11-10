@@ -1,0 +1,268 @@
+{
+  "title": "凯迪仕门锁",
+  "config": {
+    "step": {
+      "user": {
+        "title": "凯迪仕门锁：选择登录方式",
+        "description": "请选择获取门锁访问凭证的方式。自动登录使用凯迪仕智能App账号密码；手动登录沿用原V1.2.2抓包填写方式。两种方式均保留原有门锁事件、预警、门铃与成员配置。",
+        "data": {
+          "login_mode": "获取方式（必选）"
+        }
+      },
+      "manual": {
+        "title": "手动登录：填写抓包连接参数",
+        "description": "保持V1.2.2原有方式。请从您本人凯迪仕智能App的合法抓包中获取五项信息；Token属于敏感凭证。所有字段用于门锁云端接口连接。",
+        "data": {
+          "token": "访问令牌 Token（从抓包请求头获得）",
+          "wifi_sn": "门锁序列号 wifiSN（从请求体或绑定设备信息获得）",
+          "uid": "账号标识 UID（从登录响应获得）",
+          "user_agent": "客户端标识 User-Agent（从抓包请求头获得）",
+          "phone_name": "设备名称 phoneName（从抓包请求头获得）",
+          "display_name": "Home Assistant门锁显示名称（选填，默认使用门锁昵称）",
+          "访问令牌 Token（从抓包请求头获取）": "访问令牌 Token（从抓包请求头获取）",
+          "用户 UID（从登录响应获取）": "用户 UID（从登录响应获取）",
+          "门锁序列号 wifiSN（从抓包数据或绑定设备信息获取）": "门锁序列号 wifiSN（从抓包数据或绑定设备信息获取）",
+          "客户端标识 User-Agent（从抓包请求头获取）": "客户端标识 User-Agent（从抓包请求头获取）",
+          "设备名称 phoneName（从抓包请求头获取）": "设备名称 phoneName（从抓包请求头获取）",
+          "HA 门锁显示名称（留空使用门锁昵称）": "HA 门锁显示名称（留空使用门锁昵称）"
+        }
+      },
+      "auto": {
+        "title": "自动登录：输入凯迪仕 App 账号",
+        "description": "输入凯迪仕智能 App 账号及密码。优先尝试普通登录；只有 App 要求额外验证时才需要勾选图形验证码。登录密码仅用于本次登录，不会保存。最近一次状态：{login_result}",
+        "data": {
+          "account": "凯迪仕智能App登录账号（通常为手机号）",
+          "password": "凯迪仕智能App登录密码（仅本次使用）",
+          "use_captcha": "使用图形验证码登录（默认关闭；仅需要时勾选）",
+          "normal_account_mode": "普通登录账号格式（不确定时保持默认）",
+          "captcha_account_mode": "图形验证码登录账号格式（大陆手机号默认补86）",
+          "凯迪仕智能 App 登录账号（通常为手机号）": "凯迪仕智能 App 登录账号（通常为手机号）",
+          "凯迪仕智能 App 登录密码": "凯迪仕智能 App 登录密码",
+          "使用图形验证码登录（仅在需要时勾选）": "使用图形验证码登录（仅在需要时勾选）",
+          "普通登录时账号格式": "普通登录时账号格式",
+          "图形验证码登录时账号格式": "图形验证码登录时账号格式",
+          "凯迪仕 App 版本 appVersion": "凯迪仕 App 版本（请求头，默认 6.21.0.7）"
+        }
+      },
+      "captcha": {
+        "title": "额外验证：输入图形验证码",
+        "description": "先打开[图形验证码图片]({captcha_url})查看，也可尝试预览：![凯迪仕验证码]({captcha_url})。图片有效期约5分钟。仅在服务器要求或主动勾选时执行。最近反馈：{login_result}",
+        "data": {
+          "captcha_code": "图片中的验证码（区分大小写）",
+          "refresh": "重新获取验证码（勾选后提交；不提交登录）",
+          "图形验证码": "图形验证码",
+          "重新获取验证码（勾选后提交）": "重新获取验证码（勾选后提交）"
+        }
+      },
+      "device": {
+        "title": "自动登录成功：选择绑定门锁",
+        "description": "已经登录并取得Token与UID，共发现{count}把绑定门锁。请选择需要接入HA的那一把；门锁昵称默认作为HA显示名称。查询备注：{warning}",
+        "data": {
+          "selected_device": "选择要添加的凯迪仕门锁",
+          "display_name": "HA门锁显示名称（可自定义，留空使用门锁昵称）",
+          "retry": "重新查询绑定门锁列表（勾选并提交）",
+          "请选择要接入 Home Assistant 的凯迪仕门锁": "请选择要接入 Home Assistant 的凯迪仕门锁",
+          "HA 门锁显示名称（留空使用门锁昵称）": "HA 门锁显示名称（留空使用门锁昵称）",
+          "重新查询绑定门锁列表": "重新查询绑定门锁列表"
+        }
+      },
+      "missing_sn": {
+        "title": "补充门锁序列号",
+        "description": "登录已成功，但所选绑定门锁信息没有返回wifiSN。请从本人设备或抓包中核实后填写，程序不会猜测。",
+        "data": {
+          "wifi_sn": "门锁序列号wifiSN（必填）",
+          "门锁序列号 wifiSN": "门锁序列号 wifiSN"
+        }
+      }
+    },
+    "error": {
+      "required_value": "请填写所有必填项，不能只包含空格。",
+      "invalid_timezone": "请填写有效时区，例如 Asia/Shanghai。",
+      "invalid_header": "请求头不能包含换行。",
+      "duplicate_member": "匹配名已存在，请编辑已有成员。",
+      "reserved_member": "该匹配名属于当前内门把手设置，不能设为家庭成员。",
+      "inside_conflict": "内门把手编号或名称与已有成员匹配名冲突，请先调整该成员。",
+      "invalid_auth": "账号登录没有成功；可能是认证状态或账号信息问题。请不要连续重试。",
+      "cannot_connect": "认证接口无法连接或响应格式不正确，请检查网络、请求头及App版本。",
+      "missing_captcha": "请输入图形验证码。",
+      "invalid_captcha_or_auth": "图形验证码认证没有成功，请核实验证码和登录账号。",
+      "cannot_fetch_captcha": "获取图形验证码图片失败，请检查网络。",
+      "select_device": "请选择绑定门锁，或勾选重新查询。"
+    },
+    "abort": {
+      "already_configured": "该门锁已经配置。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "凯迪仕设置",
+        "menu_options": {
+          "connection": "连接与显示名称",
+          "polling": "轮询与预警通知",
+          "headers": "独立接口请求头",
+          "inside_handle": "内门把手配置",
+          "members": "成员管理（列表、添加、编辑、删除）"
+        }
+      },
+      "connection": {
+        "title": "更新连接与显示名称",
+        "description": "当 Token 失效、账号切换，或仅需更新显示名称时，请先选择更新方式。\n\n- 自动登录：输入凯迪仕 App 账号与密码，自动重新获取 Token、UID 与门锁信息。\n- 手动登录：手动填写最新抓包参数。",
+        "data": {}
+      },
+      "polling": {
+        "title": "轮询与预警通知",
+        "data": {
+          "poll_interval_event": "开锁记录间隔（秒）",
+          "poll_interval_alarm": "异常事件间隔（秒）",
+          "poll_interval_doorbell": "门铃访客间隔（秒）",
+          "poll_interval_info": "设备信息间隔（秒）",
+          "event_timezone": "无时区时间字符串的时区",
+          "alarm_notify": "显示 HA 预警通知"
+        },
+        "description": "每次启动/重载先记录最新预警time，不播报历史；后续time相同不通知，发生变化才通知。关闭内置通知仍发出kaadas_alarm事件。"
+      },
+      "headers": {
+        "title": "独立接口请求头",
+        "data": {
+          "endpoint": "接口"
+        }
+      },
+      "header_values": {
+        "title": "接口请求头",
+        "data": {
+          "token": "Token",
+          "user_agent": "User-Agent",
+          "phone_name": "phoneName",
+          "req_source": "reqSource",
+          "lang": "lang",
+          "alarm_ver": "异常接口 ver"
+        },
+        "description": "留空继承通用设置；清空后保存可取消覆盖。开锁和门铃 ver 固定为原版 20230913。"
+      },
+      "edit_member": {
+        "title": "编辑成员",
+        "data": {
+          "member_id": "选择要编辑的成员"
+        }
+      },
+      "remove_member": {
+        "title": "删除成员",
+        "description": "提交后删除该成员及其反馈实体；其他成员不受影响。",
+        "data": {
+          "member_id": "选择要删除的成员"
+        }
+      },
+      "member": {
+        "title": "成员开门反馈",
+        "description": "填写成员的 HA 显示名称、接口昵称和匹配方式；可单独勾选开门反馈和 HA 通知。\n保存后会应用到原有的成员状态识别逻辑。",
+        "data": {
+          "name": "HA显示名称（仅用于展示）",
+          "match_name": "接口昵称（填写实际抓取值）",
+          "match_mode": "匹配方式",
+          "feedback": "启用成员开门反馈",
+          "notify": "显示此成员的 HA 通知",
+          "HA 显示名称（仅用于展示）": "HA 显示名称（仅用于展示）",
+          "匹配方式": "匹配方式",
+          "启用成员开门反馈": "启用成员开门反馈",
+          "显示此成员的 HA 通知": "显示此成员的 HA 通知"
+        }
+      },
+      "inside_handle": {
+        "title": "内门把手配置",
+        "description": "填写门锁记录中对应的接口昵称原值，默认编号106。HA显示名称仅用于展示，不参与识别；不使用人员编号匹配。",
+        "data": {
+          "inside_match_name": "接口昵称（默认：编号106）",
+          "inside_match_mode": "昵称匹配方式",
+          "inside_name": "HA显示名称（例如：内门把手）"
+        }
+      },
+      "connection_manual": {
+        "title": "手动更新连接参数",
+        "description": "手动填写最新抓包得到的连接信息。Token、UID、User-Agent 和 phoneName 必填；显示名称可按需修改。",
+        "data": {
+          "访问令牌 Token（从抓包请求头获取）": "访问令牌 Token（从抓包请求头获取）",
+          "用户 UID（从登录响应获取）": "用户 UID（从登录响应获取）",
+          "客户端标识 User-Agent（从抓包请求头获取）": "客户端标识 User-Agent（从抓包请求头获取）",
+          "设备名称 phoneName（从抓包请求头获取）": "设备名称 phoneName（从抓包请求头获取）",
+          "HA 门锁显示名称（留空使用门锁昵称）": "HA 门锁显示名称（留空使用门锁昵称）"
+        }
+      },
+      "connection_auto": {
+        "title": "自动更新连接参数",
+        "description": "输入凯迪仕智能 App 账号与密码，自动重新获取 Token、UID 及门锁信息。最近一次状态：{login_result}",
+        "data": {
+          "凯迪仕智能 App 登录账号（通常为手机号）": "凯迪仕智能 App 登录账号（通常为手机号）",
+          "凯迪仕智能 App 登录密码": "凯迪仕智能 App 登录密码",
+          "使用图形验证码登录（仅在需要时勾选）": "使用图形验证码登录（仅在需要时勾选）",
+          "普通登录时账号格式": "普通登录时账号格式",
+          "图形验证码登录时账号格式": "图形验证码登录时账号格式",
+          "凯迪仕 App 版本 appVersion": "凯迪仕 App 版本（请求头，默认 6.21.0.7）"
+        }
+      },
+      "connection_captcha": {
+        "title": "额外验证：输入图形验证码",
+        "description": "先打开[图形验证码图片]({captcha_url})查看，也可尝试预览：![凯迪仕验证码]({captcha_url})。图片有效期约5分钟。仅在服务器要求或主动勾选时执行。最近反馈：{login_result}",
+        "data": {
+          "图形验证码": "图形验证码",
+          "重新获取验证码（勾选后提交）": "重新获取验证码（勾选后提交）"
+        }
+      },
+      "connection_device": {
+        "title": "自动登录成功：选择绑定门锁",
+        "description": "已经登录并取得 Token 与 UID，共发现 {count} 把绑定门锁。请选择需要更新到当前配置中的那一把。查询备注：{warning}",
+        "data": {
+          "请选择要接入 Home Assistant 的凯迪仕门锁": "请选择要接入 Home Assistant 的凯迪仕门锁",
+          "HA 门锁显示名称（留空使用门锁昵称）": "HA 门锁显示名称（留空使用门锁昵称）",
+          "重新查询绑定门锁列表": "重新查询绑定门锁列表"
+        }
+      },
+      "connection_missing_sn": {
+        "title": "补充门锁序列号",
+        "description": "登录已成功，但当前所选门锁未返回 wifiSN。请手动补充后提交。",
+        "data": {
+          "门锁序列号 wifiSN": "门锁序列号 wifiSN"
+        }
+      },
+      "members": {
+        "title": "成员管理",
+        "menu_options": {
+          "open_members_editor": "打开横向成员管理表格",
+          "members_link": "查看或复制成员管理地址（备用）"
+        }
+      },
+      "confirm_remove": {
+        "title": "确认删除家庭成员",
+        "description": "即将删除成员“{member_name}”及其开门反馈实体。取消勾选并提交可返回成员列表，不影响其他成员。",
+        "data": {}
+      },
+      "open_members_editor": {
+        "title": "进入横向成员管理表格",
+        "description": "请点击 **[在新页面打开横向成员管理表格]({member_manager_url})**，进入后即可横向编辑、添加、删除成员，并点击“保存全部设置”。\n\n如果点击链接无反应，请复制下方的 **成员管理页面地址**，在**已登录 Home Assistant 的浏览器新标签页**中打开。注意：这个配置弹窗不会直接显示横向表格，点击“提交”只返回成员管理菜单，不保存任何修改。\n\n页面注册状态：{panel_status}。",
+        "data": {
+          "成员管理页面地址（点击上方链接，或复制到新标签页）": "成员管理页面地址（点击上方链接，或复制到新标签页）"
+        }
+      },
+      "members_link": {
+        "title": "成员管理地址（备用）",
+        "description": "请在当前 Home Assistant 的地址后访问 [{member_manager_url}]({member_manager_url})。若无法点击，请复制下方路径，拼接到 HA 地址后。成员操作只在独立横向编辑页面中保存。",
+        "data": {
+          "成员管理网址路径（复制并加在HA网址后）": "成员管理网址路径（复制并加在HA网址后）"
+        }
+      }
+    },
+    "error": {
+      "required_value": "请填写所有必填项，不能只包含空格。",
+      "invalid_timezone": "请填写有效时区，例如 Asia/Shanghai。",
+      "invalid_header": "请求头不能包含换行。",
+      "duplicate_member": "匹配名已存在，请编辑已有成员。",
+      "reserved_member": "该接口昵称与内门把手匹配设置冲突。",
+      "inside_conflict": "接口昵称与已有成员匹配值冲突，请先调整对应设置。",
+      "panel_unavailable": "成员管理独立页面未能注册，请查看 HA 日志中的“成员管理页面注册失败”；门锁其他功能不受影响。"
+    },
+    "abort": {
+      "no_members": "尚未添加成员，请先选择添加成员。",
+      "member_management_opened": "请在已经打开的成员管理页面保存修改。"
+    }
+  }
+}

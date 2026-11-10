@@ -1,32 +1,47 @@
-![凯迪仕]([image.png](https://github.com/MF-142/kaadas/blob/main/icon.png))
-# Kaadas Home Assistant 集成
+# 凯迪仕门锁 Home Assistant 集成
 
-这个目录包含一个基于你提供的 Node-RED Flow 的 Home Assistant 自定义集成骨架，包含：
+凯迪仕智能门锁的 Home Assistant 自定义集成，支持**自动登录（免抓包、免手动配置）**和手动连接参数登录，并提供门锁事件、异常预警、门铃访客、设备信息及家庭成员开门反馈。
 
-- 事件轮询：门锁记录
-- 门铃记录轮询：访客记录
-- 设备信息轮询：电量、WiFi、开锁次数、管理员等
-- 用户状态 binary sensor：用户 1~4
-- 门铃图片摄像头实体
+当前版本：**1.3.4**
 
-## 使用方式
+## 安装
 
-1. 将 custom_components/kaadas 目录复制到 Home Assistant 的 custom_components 目录下。
-2. 重启 Home Assistant。
-3. 进入 设置 -> 设备和服务 -> 添加集成，搜索“凯迪仕门锁”。
-4. 填入`抓包`里的 `token`、`wifiSN`、`uid`、`User-Agent` 和 `phoneName`。
+### HACS（推荐）
 
-> [推荐使用iphone 抓包](https://apps.apple.com/cn/app/stream/id1312141691)  
-> 抓包教程请自行搜索
+1. HACS → 右上角 ⋮ → 自定义 repositories（Custom repositories）。
+2. 仓库地址填 `https://github.com/MF-142/kaadas`，类别选择 **Integration**。
+3. 安装「Kaadas Lock」后重启 Home Assistant。
+4. 在「设置 → 设备与服务 → 添加集成」中搜索「凯迪仕门锁」。
 
+### 手动安装
 
-## 说明
+1. 备份 Home Assistant 中现有的 `custom_components/kaadas` 目录。
+2. 将本仓库的 `custom_components/kaadas` 复制到 Home Assistant 的 `/config/custom_components/`。
+3. 确认目录结构为 `/config/custom_components/kaadas/manifest.json`。
+4. 重启 Home Assistant 后添加集成。
 
-- Token 是静态值，插件不会主动刷新。
-- 当前版本默认按单设备逻辑处理。
-- 如果 Token 失效，需要重新配置一次。
+从旧版本升级时，建议先备份配置并保留原有配置条目；通常不需要删除设备或重新创建集成。旧的手动配置条目可以继续使用，也可以在「选项 → 连接与显示名称」里改用自动登录重新获取凭证。
 
-## 致谢
-由hassbian的[@starxxxw](https://bbs.hassbian.com/home.php?mod=space&uid=48929)提供的思路 
+## 登录方式
 
-原帖在这里：[[流程系列] 凯迪仕门锁通过APP抓包方式接入HA](https://bbs.hassbian.com/thread-24121-1-1.html)
+- **自动登录（免手动配置）**：只需输入凯迪仕智能 App 的账号和密码，集成自动完成认证、获取访问令牌（Token）、用户 UID 和绑定门锁列表，选择门锁即可接入。若服务器要求图形验证码，按界面提示查看图片并输入即可。**密码仅用于本次登录过程，不会作为配置项保存。**
+- **手动登录**：沿用原 V1.2.2 方式，填写本人当前 App 会话中取得的访问令牌、用户 UID、门锁序列号及必要连接参数。
+
+登录成功后，访问令牌、用户 UID 和门锁序列号会作为运行所需配置保存在 Home Assistant 配置条目中。这些值属于个人账户/设备凭证，不要将 Home Assistant 的配置备份、`.storage` 目录或真实诊断数据公开分享。
+
+## 家庭成员管理
+
+通过集成选项中的「成员管理」进入独立的横向成员管理页面。管理员可添加、编辑、启用/停用或删除成员，并设置接口昵称匹配方式及 HA 通知。成员修改需在横向表格中点击保存后生效。
+
+## 安全与隐私
+
+- 源码不包含任何用户的 App 账号、密码、访问令牌、用户 UID、门锁序列号、家庭成员清单或会话凭证。
+- 普通诊断信息仅保留必要的运行阶段、HTTP/业务状态及耗时，不输出账号、密码、访问令牌、会话凭证、请求内容或内部接口地址。
+- 自动登录使用通用客户端参数，不预置具体手机型号、系统版本或网络栈标识；必要请求字段仍会按程序要求发送。
+- 手动连接模式要求使用者自行填写当前会话所需的连接参数。请勿将真实参数、配置备份、日志原文或抓取文件公开分享。
+
+## 特别感谢
+
+- 自动登录能力来自 [chexiansheng/kaadas](https://github.com/chexiansheng/kaadas) 的 V1.3.4 实现，本仓库在其基础上保持 HACS 标准目录结构同步更新。
+- 由 hassbian 的 @starxxxw 提供的思路。
+- 抓包思路来源：[流程系列] 凯迪仕门锁通过APP抓包方式接入HA https://bbs.hassbian.com/thread-24121-1-1.html
