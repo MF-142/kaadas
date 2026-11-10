@@ -15,6 +15,7 @@ from homeassistant.util import dt as dt_util
 from PIL import Image
 
 from .const import DOMAIN
+from .runtime import device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,11 +46,7 @@ class KaadasDoorbellImage(CoordinatorEntity, ImageEntity):
 
     @property
     def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self._entry.entry_id)},
-            "name": "凯迪仕门锁",
-            "manufacturer": "Kaadas",
-        }
+        return device_info(self.hass, self._entry)
 
     @property
     def extra_state_attributes(self):

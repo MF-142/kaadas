@@ -7,11 +7,13 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+from .runtime import device_info
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     data = hass.data[DOMAIN][entry.entry_id]
     entities = [
+        KaadasAlarmSensor(data["alarm"], entry),
         KaadasLockEventSensor(data["lock_event"], entry),
         KaadasDoorbellSensor(data["doorbell"], entry),
         KaadasBatterySensor(data["device_info"], entry),
@@ -34,11 +36,7 @@ class KaadasCoordinatorSensor(CoordinatorEntity):
 
     @property
     def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self._entry.entry_id)},
-            "name": "凯迪仕门锁",
-            "manufacturer": "Kaadas",
-        }
+        return device_info(self.hass, self._entry)
 
 
 class KaadasLockEventSensor(KaadasCoordinatorSensor, SensorEntity):
@@ -168,3 +166,20 @@ class KaadasAdminSensor(KaadasCoordinatorSensor, SensorEntity):
     @property
     def native_value(self):
         return self.coordinator.data.get("admin_name")
+
+
+class KaadasAlarmSensor(KaadasCoordinatorSensor, SensorEntity):
+    _attr_name = "预警信息"
+    _attr_icon = "mdi:alert"
+
+    @property
+    def unique_id(self):
+        return f"{self._entry.entry_id}_alarm"
+
+    @property
+    def native_value(self):
+        return (self.coordinator.data.get("text_content") or "无预警信息")[:255]
+
+    @property
+    def extra_state_attributes(self):
+        return dict(self.coordinator.data)
