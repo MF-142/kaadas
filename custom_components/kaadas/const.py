@@ -14,3 +14,6 @@ API_BASE_URL = "https://app.kaadas.com:34000"
 EVENT_ENDPOINT = "/app/record/operation/list"
 DOORBELL_ENDPOINT = "/app/record/operation/visit"
 DEVICE_INFO_ENDPOINT = "/app/user/findAllBindDevice"
+ALARM_ENDPOINT = "/app/record/operation/alarm"
+
+DEFAULT_INTERVALS = {"poll_interval_event": 5, "poll_interval_alarm": 5, "poll_interval_doorbell": 10, "poll_interval_info": 14400}
