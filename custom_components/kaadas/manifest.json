@@ -1,12 +1,21 @@
 {
   "domain": "kaadas",
   "name": "凯迪仕门锁",
-  "version": "1.0.0",
+  "version": "1.3.4",
   "documentation": "https://github.com/MF-142/kaadas",
   "issue_tracker": "https://github.com/MF-142/kaadas/issues",
-  "dependencies": [],
-  "codeowners": ["@MF-142"],
-  "requirements": ["aiohttp>=3.9.0"],
+  "dependencies": [
+    "persistent_notification",
+    "frontend",
+    "panel_custom"
+  ],
+  "codeowners": [
+    "@MF-142"
+  ],
+  "requirements": [
+    "aiohttp>=3.9.0",
+    "cryptography>=42.0.0"
+  ],
   "config_flow": true,
   "iot_class": "cloud_polling",
   "integration_type": "device"
